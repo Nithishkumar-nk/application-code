@@ -99,16 +99,25 @@ Trivy is used to scan Docker images for security vulnerabilities.
 ### **Commands:**
 
 ```bash
-sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-
-echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-
 sudo apt-get update
-sudo apt-get install -y trivy
+sudo apt-get install -y wget gnupg lsb-release
 
-sudo mkdir -p /var/lib/jenkins/.cache/trivy/db
-sudo chown -R jenkins:jenkins /var/lib/jenkins/.cache/trivy
+# Create keyrings directory
+sudo mkdir -p /etc/apt/keyrings
+
+# Download and add Trivy GPG key
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | \
+gpg --dearmor | sudo tee /etc/apt/keyrings/trivy.gpg > /dev/null
+
+# Add Trivy repository
+echo "deb [signed-by=/etc/apt/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | \
+sudo tee /etc/apt/sources.list.d/trivy.list
+
+# Update packages
+sudo apt-get update
+
+# Install Trivy
+sudo apt-get install -y trivy
 ```
 
 ---
