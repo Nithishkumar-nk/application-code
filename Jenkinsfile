@@ -9,15 +9,6 @@ pipeline {
             }
         }
 
-        stage('Show Project Files') {
-            steps {
-                sh '''
-                    echo "Project files:"
-                    ls -la
-                '''
-            }
-        }
-
         stage('SonarQube Analysis') {
             steps {
                 script {
@@ -30,11 +21,15 @@ pipeline {
             }
         }
 
-        stage('Docker Check') {
+        stage('Docker Build') {
             steps {
                 sh '''
-                    docker --version
-                    docker info
+                    echo "Building Docker image..."
+
+                    docker build -t fastapi-app:${BUILD_NUMBER} .
+
+                    echo "Docker images:"
+                    docker images | grep fastapi-app
                 '''
             }
         }
