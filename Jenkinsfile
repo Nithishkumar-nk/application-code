@@ -34,11 +34,12 @@ pipeline {
             }
         }
 
-        stage('Trivy Check') {
+        stage('Trivy Image Scan') {
             steps {
                 sh '''
-                    cd /tmp
-                    trivy --version
+                    echo "Scanning Docker image..."
+
+                    trivy image --severity HIGH,CRITICAL fastapi-app:${BUILD_NUMBER}
                 '''
             }
         }
